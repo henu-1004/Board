@@ -1,0 +1,62 @@
+<!--write.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>게시 글 작성</title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .write-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        .write-container h1 {
+            text-align: center;
+        }
+        .write-container input[type="text"],
+        .write-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .write-container input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .write-container input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="write-container">
+        <h1>게시 글 작성</h1>
+        <form action="/write" method="post">
+            <input type="text" name="title" placeholder="제목" required>
+            <input type="text" name="author" placeholder="작성자" required value="<%= username %>" readonly>
+            <textarea name="body" rows="10" placeholder="내용" required></textarea>
+            <input type="submit" value="작성">
+        </form>
+    </div>
+</body>
+</html>

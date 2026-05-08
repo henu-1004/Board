@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title><%= typeof title !== 'undefined' ? title : '웹사이트' %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container, .welcome-container, .list-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            text-decoration: none;
+            padding: 8px 16px;
+            color: #000;
+        }
+        .pagination strong {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+<body>
+<% if (typeof username === 'undefined') { %>
+    <div class="container">
+        <div class="login-container">
+            <h1>login</h1>
+            <form id="login-form">
+                <input type="text" name="username" placeholder="id" required>
+                <input type="password" name="password" placeholder="password" required>
+                <label for="remember-check">
+                    <input type="checkbox" id="remember-check"> 아이디 저장
+                </label>
+                <input type="submit" value="login">
+            </form>  
+            <a href="/register">회원가입</a>
+        </div>
+    </div>
+    <script>
+        $('#login-form').on('submit', function(evt) {
+            evt.preventDefault();
+            
+            var userInput = $('input[name="username"]').val();
+            var passwordInput = $('input[name="password"]').val();
+            
+            $.ajax({
+                type: 'POST',
+                url: '/',
+                contentType: 'application/json',
+                data: JSON.stringify({ username: userInput, password: passwordInput }),
+                success: function(response) {
+                    window.location.href = '/list/1?limit=5';
+                },
+                error: function(xhr) {
+                    if (xhr.status === 401) {
+                        alert('로그인 실패 아이디, 비밀번호를 확인하세요.');
+                    } else {
+                        alert('서버 오류');
+                    }
+                }
+            });
+        });
+    </script>
+<% } else { %>
+    <div class="container">
+        <% if (typeof title !== 'undefined' && title === '전체 글 조회') { %>
+            <div class="list-container">
+                <h1><%= title %></h1>
+                <a href="/write">게시 글 작성</a>
+                <a href="/logout" id="logout-link">로그아웃</a>
+                <form id="limitform">
+                    <label for="limit">페이지당 게시글 수:</label>
+                    <select name="limit" id="limit">
+                        <option value="1" <% if (limit == 1) { %>selected<% } %>>1</option>
+                        <option value="5" <% if (limit == 5) { %>selected<% } %>>5</option>
+                        <option value="10" <% if (limit == 10) { %>selected<% } %>>10</option>
+                    </select>
+                </form>
+                <table>
+                    <tr>
+                        <th>고유번호</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>작성일자</th>
+                        <th>조회수</th>
+                        <th>좋아요</th>
+                    </tr>
+                    <% rows.forEach(function(row) { %>
+                        <tr>
+                            <td><%= row.postid %></td>
+                            <td><a href="/read/<%= row.postid %>"><%= row.title %></a></td>
+                            <td><%= row.author %></td>
+                            <td><%= row.regdate.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }) %></td>
+                            <td><%= row.viewcnt %></td>
+                            <td><%= row.likes %></td>
+                        </tr>
+                    <% }); %>
+                </table>
+                <div class="pagination">
+                    <% if (currentpage > 1) { %>
+                        <a href="/list/<%= currentpage - 1 %>?limit=<%= limit %>">이전</a>
+                    <% } %>
+                    <% for (let i = 1; i <= totalpages; i++) { %>
+                        <% if (i === currentpage) { %>
+                            <strong><%= i %></strong>
+                        <% } else { %>
+                            <a href="/list/<%= i %>?limit=<%= limit %>"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                    <% if (currentpage < totalpages) { %>
+                        <a href="/list/<%= currentpage + 1 %>?limit=<%= limit %>">다음</a>
+                    <% } %>
+                </div>
+            </div>
+            <script>
+                $('#limit').on('change', function() {
+                    var limit = $(this).val();
+                    var currentPage = '<%= currentpage %>';
+                    window.location.href = '/list/' + currentPage + '?limit=' + limit;
+                });
+                
+                $('#logout-link').on('click', function(evt) {
+                    evt.preventDefault();
+                    $.ajax({
+                        type: 'GET',
+                        url: '/logout',
+                        success: function() {
+                            window.location.href = '/';
+                        },
+                        error: function() {
+                            alert('로그아웃 실패');
+                        }
+                    });
+                });
+            </script>
+        <% } else { %>
+            <div class="welcome-container">
+                <h1>welcome, <%= username %></h1>
+                <a href="/logout" id="logout-link">로그아웃</a>
+            </div>
+            <script>
+                $('#logout-link').on('click', function(evt) {
+                    evt.preventDefault();
+                    $.ajax({
+                        type: 'GET',
+                        url: '/logout',
+                        success: function() {
+                            window.location.href = '/';
+                        },
+                        error: function() {
+                            alert('로그아웃 실패');
+                        }
+                    });
+                });
+            </script>
+        <% } %>
+    </div>
+<% } %>
+</body>
+</html>
+
+
+

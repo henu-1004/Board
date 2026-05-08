@@ -1,0 +1,119 @@
+/* 기본 스타일 */
+body {
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* 컨테이너 스타일 */
+.container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 20px;
+}
+
+/* 제목 스타일 */
+.container h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* 입력 필드 스타일 */
+.container input[type="text"],
+.container input[type="password"],
+.container select,
+.container textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* 버튼 스타일 */
+.container input[type="submit"],
+.container button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px 0;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.container input[type="submit"]:hover,
+.container button:hover {
+    background-color: #555;
+}
+
+/* 링크 스타일 */
+a {
+    color: #00B7FF;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* 라벨 스타일 */
+.container label {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+/* 테이블 스타일 */
+.container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.container table th,
+.container table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.container table th {
+    background-color: #f4f4f9;
+    font-weight: bold;
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    text-decoration: none;
+    color: #00B7FF;
+}
+
+.pagination a:hover {
+    text-decoration: underline;
+}
+
+.pagination strong {
+    margin: 0 5px;
+    font-weight: bold;
+    color: #333;
+}

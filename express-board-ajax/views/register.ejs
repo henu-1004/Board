@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <title>회원가입</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    form {
+      width: 300px;
+      padding: 20px;
+      border: 1px solid #000;
+      border-radius: 5px;
+      background-color: #fff;
+    }
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      color: #000;
+    }
+    input[type="text"],
+    input[type="password"],
+    select,
+    button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
+      border: 1px solid #000;
+      border-radius: 5px;
+    }
+    input[type="submit"] {
+      background-color: #000;
+      color: #fff;
+      cursor: pointer;
+    }
+    input[type="submit"]:hover {
+      background-color: #333;
+    }
+    .error-message {
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .success-message {
+      color: green;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <form id="register-form">
+    <h1>회원가입</h1>
+    <% if (typeof error !== 'undefined') { %>
+      <div class="error-message"><%= error %></div>
+    <% } else if (typeof message !== 'undefined') { %>
+      <div class="success-message"><%= message %></div>
+    <% } %>
+    <p>
+      <label for="name">이름
+        <input type="text" name="name" placeholder="이름 입력" value="<%= typeof name !== 'undefined' ? name : '' %>">
+      </label>
+    </p>
+    <p>
+      <label for="username">아이디
+        <input type="text" name="username" placeholder="아이디 입력" value="<%= typeof username !== 'undefined' ? username : '' %>">
+        <button type="button" id="check-duplicate-button">아이디 중복확인</button>
+      </label>
+    </p>
+    <p>
+      <label for="password">비밀번호
+        <input type="password" name="password" placeholder="비밀번호 입력">
+      </label>
+    </p>
+    <p>
+      <label for="passwordconfirm">비밀번호 확인
+        <input type="password" name="passwordconfirm" placeholder="비밀번호 재입력">
+      </label>
+    </p>
+    <p>
+      <label for="email">이메일
+        <input type="text" name="email" id="email" value="<%= typeof email !== 'undefined' ? email : '' %>">@
+        <input type="text" name="emaildomain" id="emaildomain" value="<%= typeof emaildomain !== 'undefined' ? emaildomain : '' %>">
+        <select name="email_sel" id="email_sel">
+          <option value="">직접 입력</option>
+          <option value="naver.com">NAVER</option>
+          <option value="hanmail.net">DAUM</option>
+          <option value="gmail.com">GOOGLE</option>
+        </select>
+      </label>
+    </p>
+    <input type="submit" value="회원가입">
+  </form>
+
+  <script>
+    $('#email_sel').on('change', function() {
+      const emaildomain = $(this).val();
+      $('#emaildomain').val(emaildomain);
+    });
+
+    $('#check-duplicate-button').on('click', function() {
+      const username = $("input[name='username']").val();
+
+      if (!username) {
+        alert("아이디를 입력해주세요.");
+        return;
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: '/checkduplicateid',
+        contentType: 'application/json',
+        data: JSON.stringify({ username: username }),
+        success: function(response) {
+          if (response.isduplicate) {
+            alert("아이디가 중복되었습니다. 다른 아이디를 입력해주세요.");
+          } else {
+            alert("사용 가능한 아이디입니다.");
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error("아이디 중복 확인 오류:", error);
+        }
+      });
+    });
+
+    $('#register-form').on('submit', function(evt) {
+      evt.preventDefault();
+
+      const formData = $(this).serialize();
+
+      $.ajax({
+        type: 'POST',
+        url: '/register',
+        data: formData,
+        success: function(response) {
+          window.location.href = '/';
+        },
+        error: function(xhr, status, error) {
+          console.error("회원가입 오류:", error);
+          if (xhr.responseJSON && xhr.responseJSON.message) {
+            alert(xhr.responseJSON.message);
+          } else {
+            alert("회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.");
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
